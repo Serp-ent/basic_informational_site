@@ -1,12 +1,37 @@
 const http = require("http");
+const fs = require('fs');
 
 const PORT = 5173;
 
 const server = http.createServer((req, res) => {
-  res.writeHead(200, { 'Content-type': 'text/plain' });
-  res.end(
-    'Hello world'
-  );
+  let filename;
+  switch (req.url) {
+    case '/':
+    case '':
+      filename = 'index.html';
+      break;
+    case '/about':
+      filename = 'about.html';
+      break;
+    case '/contact-me':
+      filename = 'contact-me.html';
+      break;
+    default:
+      filename = '404.html';
+  }
+
+  fs.readFile(filename, 'utf8', (err, fileContent) => {
+    if (err) {
+      console.log(err.message);
+      res.end('Internal server error');
+      return;
+    }
+
+    res.end(fileContent);
+  })
+  // // read file
+
+  // res.end();
 });
 
 server.listen(PORT);
